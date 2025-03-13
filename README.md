@@ -55,5 +55,5 @@ Make sure you have the following installed:
 
 #### 1️⃣ Clone the repository  
 ```sh
-git clone https://github.com/your-username/rahma-connect.git
-cd rahma-connect
+git clone https://github.com/Nooorrrr/Dcf-hackathon.git
+cd Dcf-hackathon
