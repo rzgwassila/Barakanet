@@ -61,7 +61,7 @@ const Signup = () => {
 
         <div className="auth-right">
           <img
-            src="/assets/bike-image.png"
+            src="../../public/images/auth.png"
             alt="Cyclist"
             className="auth-image"
           />
