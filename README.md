@@ -34,9 +34,9 @@
 
 | Component       | Technology |
 |----------------|-----------|
-| **Frontend**   | React.js / Next.js (Web) + React Native (Mobile) |
-| **Backend**    | Node.js / Django (for APIs & scheduling) |
-| **Database**   | PostgreSQL / Firebase (for real-time updates) |
+| **Frontend**   | React.js  |
+| **Backend**    | Django |
+| **Database**   | Firebase (for real-time updates) |
 | **Maps & Geolocation** | Google Maps API / OpenStreetMap |
 | **AI & Matching** | TensorFlow.js (for recommendation system) |
 | **Notifications** | Firebase Cloud Messaging (push notifications for urgent help requests) |
@@ -48,8 +48,8 @@
 ### Prerequisites  
 Make sure you have the following installed:  
 - Node.js & npm  
-- Python & Django (if using the Django backend)  
-- PostgreSQL or Firebase  
+- Python & Django 
+- Firebase  
 
 ### Installation  
 
