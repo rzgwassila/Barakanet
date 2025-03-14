@@ -1,22 +1,16 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    UserViewSet, LocationViewSet, VolunteerViewSet,
-    CharitableOrganizationViewSet, PhotoViewSet,
-    EventViewSet, VolunteerRequestViewSet, VolunteerHistoryViewSet
-)
+from .views import (UserViewSet, CharityEventViewSet, ItemRequestViewSet,
+                   VolunteerApplicationViewSet, ItemLendingViewSet)
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'locations', LocationViewSet)
-router.register(r'volunteers', VolunteerViewSet)
-router.register(r'organizations', CharitableOrganizationViewSet)
-router.register(r'photos', PhotoViewSet)
-router.register(r'events', EventViewSet)
-router.register(r'volunteer-requests', VolunteerRequestViewSet)
-router.register(r'volunteer-history', VolunteerHistoryViewSet)
+router.register(r'events', CharityEventViewSet)
+router.register(r'item-requests', ItemRequestViewSet)
+router.register(r'applications', VolunteerApplicationViewSet)
+router.register(r'lendings', ItemLendingViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('auth/', include('rest_framework.urls')),
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls')),
 ]

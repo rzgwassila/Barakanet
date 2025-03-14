@@ -1,113 +1,69 @@
+# serializers.py
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from .models import (
-    Location, Volunteer, CharitableOrganization, 
-    Photo, Event, VolunteerRequest, VolunteerHistory
-)
-
-User = get_user_model()
+from .models import User, CharityEvent, ItemRequest, VolunteerApplication, ItemLending
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'phone_number', 'role']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'username', 'email', 'user_type', 'location', 'bio', 'profile_image']
+        read_only_fields = ['id']
+
+class ItemRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemRequest
+        fields = ['id', 'name', 'description', 'quantity']
+        read_only_fields = ['id']
+
+class CharityEventSerializer(serializers.ModelSerializer):
+    item_requests = ItemRequestSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = CharityEvent
+        fields = ['id', 'charity', 'title', 'description', 'location', 'date', 
+                  'created_at', 'updated_at', 'volunteers_needed', 'item_requests']
+        read_only_fields = ['id', 'charity', 'created_at', 'updated_at']
     
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+        user = self.context['request'].user
+        if user.user_type != 'charity':
+            raise serializers.ValidationError("Only charity users can create events")
+        validated_data['charity'] = user
+        return super().create(validated_data)
 
-class LocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Location
-        fields = ['id', 'latitude', 'longitude', 'address']
-
-class PhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Photo
-        fields = ['photo_id', 'url', 'caption', 'upload_date']
-
-class VolunteerSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    location = LocationSerializer(required=False)
+class VolunteerApplicationSerializer(serializers.ModelSerializer):
+    volunteer_username = serializers.ReadOnlyField(source='volunteer.username')
+    event_title = serializers.ReadOnlyField(source='event.title')
     
     class Meta:
-        model = Volunteer
-        fields = ['id', 'user', 'location']
+        model = VolunteerApplication
+        fields = ['id', 'volunteer', 'volunteer_username', 'event', 'event_title', 'status', 'created_at']
+        read_only_fields = ['id', 'volunteer', 'volunteer_username', 'status', 'created_at']
     
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user_data['role'] = 'volunteer'
-        user = UserSerializer().create(user_data)
-        
-        location_data = validated_data.pop('location', None)
-        location = None
-        if location_data:
-            location = Location.objects.create(**location_data)
-        
-        volunteer = Volunteer.objects.create(user=user, location=location, **validated_data)
-        return volunteer
+        user = self.context['request'].user
+        if user.user_type != 'volunteer':
+            raise serializers.ValidationError("Only volunteer users can apply for events")
+        validated_data['volunteer'] = user
+        return super().create(validated_data)
 
-class CharitableOrganizationSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    location = LocationSerializer(required=False)
-    photos = PhotoSerializer(many=True, read_only=True)
+class ItemLendingSerializer(serializers.ModelSerializer):
+    volunteer_username = serializers.ReadOnlyField(source='volunteer.username')
+    item_name = serializers.ReadOnlyField(source='item_request.name')
     
     class Meta:
-        model = CharitableOrganization
-        fields = ['id', 'user', 'name', 'description', 'contact_info', 'location', 'photos']
+        model = ItemLending
+        fields = ['id', 'volunteer', 'volunteer_username', 'item_request', 'item_name', 'quantity', 'status', 'created_at']
+        read_only_fields = ['id', 'volunteer', 'volunteer_username', 'status', 'created_at']
     
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user_data['role'] = 'organization'
-        user = UserSerializer().create(user_data)
+        user = self.context['request'].user
+        if user.user_type != 'volunteer':
+            raise serializers.ValidationError("Only volunteer users can lend items")
+        validated_data['volunteer'] = user
         
-        location_data = validated_data.pop('location', None)
-        location = None
-        if location_data:
-            location = Location.objects.create(**location_data)
+        # Check if quantity is not more than needed
+        item_request = validated_data['item_request']
+        if validated_data['quantity'] > item_request.quantity:
+            raise serializers.ValidationError(f"Requested quantity exceeds available quantity. Maximum: {item_request.quantity}")
         
-        organization = CharitableOrganization.objects.create(
-            user=user, 
-            location=location, 
-            **validated_data
-        )
-        return organization
-
-class EventSerializer(serializers.ModelSerializer):
-    location = LocationSerializer(required=False)
-    photos = PhotoSerializer(many=True, read_only=True)
-    volunteers = VolunteerSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = Event
-        fields = [
-            'event_id', 'organization', 'title', 'description', 
-            'date_time', 'location', 'volunteers_needed', 
-            'status', 'photos', 'volunteers'
-        ]
-    
-    def create(self, validated_data):
-        location_data = validated_data.pop('location', None)
-        location = None
-        if location_data:
-            location = Location.objects.create(**location_data)
-        
-        event = Event.objects.create(location=location, **validated_data)
-        return event
-
-class VolunteerRequestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VolunteerRequest
-        fields = [
-            'request_id', 'organization', 'description', 
-            'skills', 'number_of_volunteers', 'status'
-        ]
-
-class VolunteerHistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VolunteerHistory
-        fields = [
-            'history_id', 'volunteer', 'organization', 
-            'event', 'donation_amount', 'date', 'type'
-        ]
+        return super().create(validated_data)
