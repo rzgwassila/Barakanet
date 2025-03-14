@@ -1,7 +1,7 @@
-# 🌍 IhsanNet - A Digital Platform for Empowering Community Solidarity & Volunteerism
+# 🌍 BarakaNet - A Digital Platform for Empowering Community Solidarity & Volunteerism
 
 ## 🔹 Overview  
-**IhsanNet** is a web and mobile application that **matches volunteers** with humanitarian projects, such as *Mata3im Rahma* (free Iftar restaurants). It streamlines communication, enhances collaboration, and optimizes **resource management** for organizations.  
+**BarakaNet** is a web and mobile application that **matches volunteers** with humanitarian projects, such as *Mata3im Rahma* (free Iftar restaurants). It streamlines communication, enhances collaboration, and optimizes **resource management** for organizations.  
 
 ## 🔹 Features & Functionality  
 
