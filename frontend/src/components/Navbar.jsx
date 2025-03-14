@@ -1,37 +1,34 @@
 import React from "react";
-import "../styles/Navbar.css";
-import { Link } from "react-router-dom";
-import { FaGift, FaHeart } from "react-icons/fa";
+import { NavLink } from "react-router-dom"; // Use NavLink instead of Link
+import "../styles/Navbar.css"; // Make sure to update the filename if needed
+import { FaUtensils, FaHandHoldingHeart, FaRegHeart } from "react-icons/fa";
 
 const Navbar = () => {
   return (
     <nav className="navbar">
       <ul className="nav-links">
-        <li className="active">
-          <a href="#">Home</a>
-          <span className="underline"></span>
+        <li>
+          <NavLink to="/" className="nav-link" activeClassName="active-link">
+            Home
+          </NavLink>
         </li>
         <li>
-          <a href="#">Restaurants</a>
-        </li>
-        <li>
-          <a href="#">
-            <FaGift /> Donations
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <FaHeart /> Favorites
-          </a>
+          <NavLink
+            to="/restaurants"
+            className="nav-link"
+            activeClassName="active"
+          >
+            Restaurants
+          </NavLink>
         </li>
       </ul>
       <div className="nav-buttons">
-        <Link to="/login" className="login-btn-1">
+        <NavLink to="/login" className="login-btn-1">
           Login
-        </Link>
-        <Link to="/signup" className="signup-btn-1">
-          Sign up
-        </Link>
+        </NavLink>
+        <NavLink to="/signup" className="signup-btn-1" activeClassName="active">
+          Sign Up
+        </NavLink>
       </div>
     </nav>
   );
