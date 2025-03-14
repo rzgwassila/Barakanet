@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css"; // Make sure Leaflet styles are imported
 import "leaflet/dist/images/marker-shadow.png";
-import Navbar from "./Navbar"; // Ensure you have a Navbar component
-import "../styles/RestaurantFiltre.css";
+import Navbar from "../common/Navbar"; // Ensure you have a Navbar component
+import "../../styles/RestaurantFiltre.css";
 
 import L from "leaflet";
 

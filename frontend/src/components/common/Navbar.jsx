@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom"; // Use NavLink instead of Link
-import "../styles/Navbar.css"; // Make sure to update the filename if needed
+import "../../styles/Navbar.css"; // Make sure to update the filename if needed
 import { FaUtensils, FaHandHoldingHeart, FaRegHeart } from "react-icons/fa";
 
 const Navbar = () => {

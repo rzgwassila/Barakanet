@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/RestaurantList.css"; // Ensure styles are added
+import "../../styles/RestaurantList.css"; // Ensure styles are added
 
 const restaurants = [
   {

@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import RestaurantFiltre from "./components/RestaurantFiltre";
+import RestaurantFiltre from "./components/volunteer/RestaurantFiltre";
 const App = () => {
   return (
     <Routes>
