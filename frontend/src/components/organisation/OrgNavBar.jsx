@@ -10,26 +10,37 @@ const OrganizationNavbar = () => {
       <ul className="nav-links">
         <li
           className={
-            location.pathname === "/organization/dashboard" ? "active" : ""
+            location.pathname === "/organisation/dashboard" ? "active" : ""
           }
         >
-          <Link to="/organization/dashboard">Dashboard</Link>
+          <Link to="/organisation/dashboard">Dashboard</Link>
           <span className="underline"></span>
         </li>
+
         <li
           className={
-            location.pathname === "/organization/create-event" ? "active" : ""
+            location.pathname === "/organisation/create-event" ? "active" : ""
           }
         >
-          <Link to="/organization/create-event">Create Event</Link>
+          <Link to="/organisation/create-event">Create Event</Link>
           <span className="underline"></span>
         </li>
+
         <li
           className={
-            location.pathname === "/organization/profile" ? "active" : ""
+            location.pathname === "/organisation/profil" ? "active" : ""
           }
         >
-          <Link to="/organization/profile">Profile</Link>
+          <Link to="/organisation/profil">Profile</Link>
+          <span className="underline"></span>
+        </li>
+
+        <li
+          className={
+            location.pathname === "/organisation/volunteerList" ? "active" : ""
+          }
+        >
+          <Link to="/organisation/volunteerList">Manage Volunteers</Link>
           <span className="underline"></span>
         </li>
       </ul>

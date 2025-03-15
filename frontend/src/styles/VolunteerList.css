@@ -1,0 +1,42 @@
+.volunteer-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .volunteer-table th, .volunteer-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .status.accepted {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .status.refused {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .accept-btn, .refuse-btn, .accept-all-btn, .refuse-all-btn {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .accept-btn {
+    background-color: green;
+    color: white;
+  }
+  
+  .refuse-btn {
+    background-color: red;
+    color: white;
+  }
+  
+  .bulk-actions {
+    margin-top: 15px;
+  }
+  

@@ -1,0 +1,88 @@
+.container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+  }
+  
+  .title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .top-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .top-buttons button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .refuse-all {
+    background: #ffcc00;
+    color: black;
+  }
+  
+  .accept-all {
+    background: #d32f2f;
+    color: white;
+  }
+  
+  .table-container {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table-container th, 
+  .table-container td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .table-container th {
+    background: #f8f9fa;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+  }
+  
+  .status-pending {
+    background: #ffebcc;
+    color: #d32f2f;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .action-buttons button {
+    padding: 5px 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .refuse-btn {
+    background: #ffcc00;
+    color: black;
+  }
+  
+  .accept-btn {
+    background: #d32f2f;
+    color: white;
+  }
+  
