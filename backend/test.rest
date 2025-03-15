@@ -1,688 +1,135 @@
 @baseUrl = http://localhost:8000/api
+@contentType = application/json
+@token = 
 
-# ==============================
-# AUTHENTICATION
-# ==============================
-
-###
-# Register charity users
-POST {{baseUrl}}/register/
-Content-Type: application/json
+### Register a new volunteer user
+POST {{baseUrl}}/users/register/
+Content-Type: {{contentType}}
 
 {
-    "username": "ra7maFoundation",
-    "email": "ra7ma@example.com",
-    "password": "SecurePass123!",
-    "password2": "SecurePass123!",
-    "user_type": "charity",
-    "location": "New York",
-    "bio": "Providing hope to the homeless since 2010"
+    "username": "volunteer1",
+    "email": "volunteer1@example.com",
+    "password": "securepassword123",
+    "phone_number": "1234567890",
+    "location": "bab eloued, dz",
+    "role": "volunteer"
 }
 
-###
-POST {{baseUrl}}/register/
-Content-Type: application/json
+### Register a new charity user
+POST {{baseUrl}}/users/register/
+Content-Type: {{contentType}}
 
 {
-    "username": "kidsFirst",
-    "email": "kids@example.com",
-    "password": "SecurePass123!",
-    "password2": "SecurePass123!",
-    "user_type": "charity",
-    "location": "Chicago",
-    "bio": "Supporting children's education and wellbeing"
+    "username": "charity1",
+    "email": "charity1@example.com",
+    "password": "securepassword123",
+    "phone_number": "0987654321",
+    "location": "San Francisco, CA",
+    "role": "charity"
 }
 
-###
-POST {{baseUrl}}/register/
-Content-Type: application/json
+### Login and get tokens
+# @name login
+POST {{baseUrl}}/token/
+Content-Type: {{contentType}}
 
 {
-    "username": "greenEarth",
-    "email": "green@example.com",
-    "password": "SecurePass123!",
-    "password2": "SecurePass123!",
-    "user_type": "charity",
-    "location": "San Francisco",
-    "bio": "Environmental conservation and sustainability"
+    "username": "volunteer1",
+    "password": "securepassword123"
 }
 
-###
-# Register volunteer users
-POST {{baseUrl}}/register/
-Content-Type: application/json
+### Store token from the login response
+@token = {{login.response.body.access}}
+
+### Get current user profile
+GET {{baseUrl}}/users/me/
+Authorization: Bearer {{token}}
+
+### Get all users (admin function)
+GET {{baseUrl}}/users/
+Authorization: Bearer {{token}}
+
+### Update user profile
+PATCH {{baseUrl}}/users/1/
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
 
 {
-    "username": "johndoe",
-    "email": "john@example.com",
-    "password": "SecurePass123!",
-    "password2": "SecurePass123!",
-    "user_type": "volunteer",
-    "location": "New York",
-    "bio": "Tech professional looking to give back to the community"
+    "phone_number": "1112223333",
+    "location": "Boston, MA"
 }
 
-###
-POST {{baseUrl}}/register/
-Content-Type: application/json
+### Login as charity
+# @name loginCharity
+POST {{baseUrl}}/token/
+Content-Type: {{contentType}}
 
 {
-    "username": "janedoe",
-    "email": "jane@example.com",
-    "password": "SecurePass123!",
-    "password2": "SecurePass123!",
-    "user_type": "volunteer",
-    "location": "Chicago",
-    "bio": "College student passionate about education"
+    "username": "charity1",
+    "password": "securepassword123"
 }
 
-###
-POST {{baseUrl}}/register/
-Content-Type: application/json
+### Store charity token
+@charityToken = {{loginCharity.response.body.access}}
+
+### Upload charity file
+POST {{baseUrl}}/charity-files/
+Authorization: Bearer {{charityToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="example.pdf"
+Content-Type: application/pdf
+
+< ./path/to/your/example.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Example charity document
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Upload charity image
+POST {{baseUrl}}/charity-images/
+Authorization: Bearer {{charityToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="charity_photo.jpg"
+Content-Type: image/jpeg
+
+< ./path/to/your/charity_photo.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="caption"
+
+Our charity team in action
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Get charity files
+GET {{baseUrl}}/charity-files/
+Authorization: Bearer {{charityToken}}
+
+### Get charity images
+GET {{baseUrl}}/charity-images/
+Authorization: Bearer {{charityToken}}
+
+### Update charity social media links
+PATCH {{baseUrl}}/users/2/
+Authorization: Bearer {{charityToken}}
+Content-Type: {{contentType}}
 
 {
-    "username": "samsmith",
-    "email": "sam@example.com",
-    "password": "SecurePass123!",
-    "password2": "SecurePass123!",
-    "user_type": "volunteer",
-    "location": "San Francisco",
-    "bio": "Environmental engineer looking to help conservation efforts"
+    "charity_profile": {
+        "social_media_linkedin": "https://linkedin.com/in/charity1",
+        "social_media_twitter": "https://twitter.com/charity1",
+        "social_media_facebook": "https://facebook.com/charity1",
+        "social_media_instagram": "https://instagram.com/charity1"
+    }
 }
 
-###
-# Login as charities
-# Login as hopeFoundation
-POST {{baseUrl}}/login/
-Content-Type: application/json
+### Refresh token
+POST {{baseUrl}}/token/refresh/
+Content-Type: {{contentType}}
 
 {
-    "username": "hopeFoundation",
-    "password": "SecurePass123!"
+    "refresh": "your_refresh_token_here"
 }
-
-###
-# Login as kidsFirst
-POST {{baseUrl}}/login/
-Content-Type: application/json
-
-{
-    "username": "kidsFirst",
-    "password": "SecurePass123!"
-}
-
-###
-# Login as greenEarth
-POST {{baseUrl}}/login/
-Content-Type: application/json
-
-{
-    "username": "greenEarth",
-    "password": "SecurePass123!"
-}
-
-###
-# Login as volunteers
-# Login as johndoe
-POST {{baseUrl}}/login/
-Content-Type: application/json
-
-{
-    "username": "johndoe",
-    "password": "SecurePass123!"
-}
-
-###
-# Login as janedoe
-POST {{baseUrl}}/login/
-Content-Type: application/json
-
-{
-    "username": "janedoe",
-    "password": "SecurePass123!"
-}
-
-###
-# Login as samsmith
-POST {{baseUrl}}/login/
-Content-Type: application/json
-
-{
-    "username": "samsmith",
-    "password": "SecurePass123!"
-}
-
-# Store tokens from login responses
-@hopeFoundationToken = YOUR_TOKEN_HERE
-@kidsFirstToken = YOUR_TOKEN_HERE
-@greenEarthToken = YOUR_TOKEN_HERE
-@johndoeToken = YOUR_TOKEN_HERE
-@janedoeToken = YOUR_TOKEN_HERE
-@samsmithToken = YOUR_TOKEN_HERE
-
-# ==============================
-# CHARITY EVENTS
-# ==============================
-
-###
-# Create events for hopeFoundation
-POST {{baseUrl}}/events/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "title": "Winter Clothing Drive",
-    "description": "Collecting warm clothes for the homeless during winter",
-    "location": "New York",
-    "date": "2025-05-15T10:00:00Z",
-    "volunteers_needed": 8
-}
-
-###
-POST {{baseUrl}}/events/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "title": "Soup Kitchen Volunteers",
-    "description": "Help serve meals at our downtown soup kitchen",
-    "location": "New York",
-    "date": "2025-04-20T09:00:00Z",
-    "volunteers_needed": 12
-}
-
-###
-# Create events for kidsFirst
-POST {{baseUrl}}/events/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "title": "After-School Tutoring",
-    "description": "Help children with homework and learning activities",
-    "location": "Chicago",
-    "date": "2025-04-05T15:30:00Z",
-    "volunteers_needed": 10
-}
-
-###
-POST {{baseUrl}}/events/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "title": "Children's Book Drive",
-    "description": "Collecting children's books for underserved communities",
-    "location": "Chicago",
-    "date": "2025-05-10T10:00:00Z",
-    "volunteers_needed": 6
-}
-
-###
-# Create events for greenEarth
-POST {{baseUrl}}/events/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "title": "Beach Cleanup Day",
-    "description": "Help clean plastic and trash from local beaches",
-    "location": "San Francisco",
-    "date": "2025-04-22T09:00:00Z",
-    "volunteers_needed": 20
-}
-
-###
-POST {{baseUrl}}/events/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "title": "Urban Garden Planting",
-    "description": "Plant vegetables and flowers in community gardens",
-    "location": "San Francisco",
-    "date": "2025-05-01T10:00:00Z",
-    "volunteers_needed": 15
-}
-
-# Store event IDs from responses
-@eventId1 = YOUR_EVENT_ID_HERE  # Winter Clothing Drive
-@eventId2 = YOUR_EVENT_ID_HERE  # Soup Kitchen Volunteers
-@eventId3 = YOUR_EVENT_ID_HERE  # After-School Tutoring
-@eventId4 = YOUR_EVENT_ID_HERE  # Children's Book Drive
-@eventId5 = YOUR_EVENT_ID_HERE  # Beach Cleanup Day
-@eventId6 = YOUR_EVENT_ID_HERE  # Urban Garden Planting
-
-# ==============================
-# ITEM REQUESTS
-# ==============================
-
-###
-# Add item requests to events
-POST {{baseUrl}}/events/{{eventId1}}/add_item_request/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "name": "Winter Coats",
-    "description": "New or gently used winter coats for adults",
-    "quantity": 50
-}
-
-###
-POST {{baseUrl}}/events/{{eventId1}}/add_item_request/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "name": "Gloves and Scarves",
-    "description": "Warm gloves and scarves for cold weather",
-    "quantity": 100
-}
-
-###
-POST {{baseUrl}}/events/{{eventId2}}/add_item_request/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "name": "Serving Utensils",
-    "description": "Large serving spoons, ladles, and tongs",
-    "quantity": 20
-}
-
-###
-POST {{baseUrl}}/events/{{eventId4}}/add_item_request/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "name": "Children's Books",
-    "description": "Books appropriate for ages 5-12",
-    "quantity": 200
-}
-
-###
-POST {{baseUrl}}/events/{{eventId5}}/add_item_request/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "name": "Trash Bags",
-    "description": "Heavy-duty trash bags for beach cleanup",
-    "quantity": 100
-}
-
-###
-POST {{baseUrl}}/events/{{eventId5}}/add_item_request/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "name": "Gloves",
-    "description": "Work gloves for handling trash",
-    "quantity": 40
-}
-
-###
-POST {{baseUrl}}/events/{{eventId6}}/add_item_request/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "name": "Gardening Tools",
-    "description": "Shovels, trowels, and gardening gloves",
-    "quantity": 15
-}
-
-# Store item request IDs from responses
-@itemRequestId1 = YOUR_ITEM_REQUEST_ID_HERE  # Winter Coats
-@itemRequestId2 = YOUR_ITEM_REQUEST_ID_HERE  # Gloves and Scarves
-@itemRequestId3 = YOUR_ITEM_REQUEST_ID_HERE  # Serving Utensils
-@itemRequestId4 = YOUR_ITEM_REQUEST_ID_HERE  # Children's Books
-@itemRequestId5 = YOUR_ITEM_REQUEST_ID_HERE  # Trash Bags
-@itemRequestId6 = YOUR_ITEM_REQUEST_ID_HERE  # Gloves
-@itemRequestId7 = YOUR_ITEM_REQUEST_ID_HERE  # Gardening Tools
-
-# ==============================
-# VOLUNTEER APPLICATIONS
-# ==============================
-
-###
-# johndoe applies to events
-POST {{baseUrl}}/applications/
-Authorization: Token {{johndoeToken}}
-Content-Type: application/json
-
-{
-    "event": {{eventId1}}
-}
-
-###
-POST {{baseUrl}}/applications/
-Authorization: Token {{johndoeToken}}
-Content-Type: application/json
-
-{
-    "event": {{eventId2}}
-}
-
-###
-# janedoe applies to events
-POST {{baseUrl}}/applications/
-Authorization: Token {{janedoeToken}}
-Content-Type: application/json
-
-{
-    "event": {{eventId3}}
-}
-
-###
-POST {{baseUrl}}/applications/
-Authorization: Token {{janedoeToken}}
-Content-Type: application/json
-
-{
-    "event": {{eventId4}}
-}
-
-###
-# samsmith applies to events
-POST {{baseUrl}}/applications/
-Authorization: Token {{samsmithToken}}
-Content-Type: application/json
-
-{
-    "event": {{eventId5}}
-}
-
-###
-POST {{baseUrl}}/applications/
-Authorization: Token {{samsmithToken}}
-Content-Type: application/json
-
-{
-    "event": {{eventId6}}
-}
-
-# Store application IDs from responses
-@applicationId1 = YOUR_APPLICATION_ID_HERE  # johndoe - Winter Clothing Drive
-@applicationId2 = YOUR_APPLICATION_ID_HERE  # johndoe - Soup Kitchen Volunteers
-@applicationId3 = YOUR_APPLICATION_ID_HERE  # janedoe - After-School Tutoring
-@applicationId4 = YOUR_APPLICATION_ID_HERE  # janedoe - Children's Book Drive
-@applicationId5 = YOUR_APPLICATION_ID_HERE  # samsmith - Beach Cleanup Day
-@applicationId6 = YOUR_APPLICATION_ID_HERE  # samsmith - Urban Garden Planting
-
-# ==============================
-# ITEM LENDINGS
-# ==============================
-
-###
-# johndoe lends items
-POST {{baseUrl}}/lendings/
-Authorization: Token {{johndoeToken}}
-Content-Type: application/json
-
-{
-    "item_request": {{itemRequestId1}},
-    "quantity": 5
-}
-
-###
-POST {{baseUrl}}/lendings/
-Authorization: Token {{johndoeToken}}
-Content-Type: application/json
-
-{
-    "item_request": {{itemRequestId2}},
-    "quantity": 10
-}
-
-###
-# janedoe lends items
-POST {{baseUrl}}/lendings/
-Authorization: Token {{janedoeToken}}
-Content-Type: application/json
-
-{
-    "item_request": {{itemRequestId4}},
-    "quantity": 20
-}
-
-###
-# samsmith lends items
-POST {{baseUrl}}/lendings/
-Authorization: Token {{samsmithToken}}
-Content-Type: application/json
-
-{
-    "item_request": {{itemRequestId5}},
-    "quantity": 15
-}
-
-###
-POST {{baseUrl}}/lendings/
-Authorization: Token {{samsmithToken}}
-Content-Type: application/json
-
-{
-    "item_request": {{itemRequestId7}},
-    "quantity": 3
-}
-
-# Store lending IDs from responses
-@lendingId1 = YOUR_LENDING_ID_HERE  # johndoe - Winter Coats
-@lendingId2 = YOUR_LENDING_ID_HERE  # johndoe - Gloves and Scarves
-@lendingId3 = YOUR_LENDING_ID_HERE  # janedoe - Children's Books
-@lendingId4 = YOUR_LENDING_ID_HERE  # samsmith - Trash Bags
-@lendingId5 = YOUR_LENDING_ID_HERE  # samsmith - Gardening Tools
-
-# ==============================
-# APPROVING APPLICATIONS
-# ==============================
-
-###
-# hopeFoundation approves applications
-POST {{baseUrl}}/applications/{{applicationId1}}/update_status/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-POST {{baseUrl}}/applications/{{applicationId2}}/update_status/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-# kidsFirst approves one application and rejects another
-POST {{baseUrl}}/applications/{{applicationId3}}/update_status/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-POST {{baseUrl}}/applications/{{applicationId4}}/update_status/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "status": "rejected"
-}
-
-###
-# greenEarth approves applications
-POST {{baseUrl}}/applications/{{applicationId5}}/update_status/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-POST {{baseUrl}}/applications/{{applicationId6}}/update_status/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-# ==============================
-# APPROVING ITEM LENDINGS
-# ==============================
-
-###
-# hopeFoundation approves lendings
-POST {{baseUrl}}/lendings/{{lendingId1}}/update_status/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-POST {{baseUrl}}/lendings/{{lendingId2}}/update_status/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-# kidsFirst approves lending
-POST {{baseUrl}}/lendings/{{lendingId3}}/update_status/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-# greenEarth approves lendings
-POST {{baseUrl}}/lendings/{{lendingId4}}/update_status/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-###
-POST {{baseUrl}}/lendings/{{lendingId5}}/update_status/
-Authorization: Token {{greenEarthToken}}
-Content-Type: application/json
-
-{
-    "status": "accepted"
-}
-
-# ==============================
-# DATA RETRIEVAL & FILTERING
-# ==============================
-
-###
-# Get all events
-GET {{baseUrl}}/events/
-
-###
-# Get events by location
-GET {{baseUrl}}/events/?location=New+York
-
-###
-# Get events by search term
-GET {{baseUrl}}/events/?search=garden
-
-###
-# Get all volunteer applications for a charity
-GET {{baseUrl}}/applications/
-Authorization: Token {{hopeFoundationToken}}
-
-###
-# Get pending applications
-GET {{baseUrl}}/applications/?status=pending
-Authorization: Token {{kidsFirstToken}}
-
-###
-# Get accepted applications
-GET {{baseUrl}}/applications/?status=accepted
-Authorization: Token {{greenEarthToken}}
-
-###
-# Get all item lendings for a charity
-GET {{baseUrl}}/lendings/
-Authorization: Token {{hopeFoundationToken}}
-
-###
-# Get accepted lendings
-GET {{baseUrl}}/lendings/?status=accepted
-Authorization: Token {{kidsFirstToken}}
-
-###
-# Get all item requests
-GET {{baseUrl}}/item-requests/
-
-###
-# Get item requests for a specific event
-GET {{baseUrl}}/item-requests/?event={{eventId5}}
-
-# ==============================
-# MARK ITEMS AS RETURNED
-# ==============================
-
-###
-# Mark an item as returned
-POST {{baseUrl}}/lendings/{{lendingId1}}/update_status/
-Authorization: Token {{hopeFoundationToken}}
-Content-Type: application/json
-
-{
-    "status": "returned"
-}
-
-# ==============================
-# USER PROFILE UPDATES
-# ==============================
-
-###
-# Update charity profile
-PATCH {{baseUrl}}/users/
-Authorization: Token {{kidsFirstToken}}
-Content-Type: application/json
-
-{
-    "bio": "Supporting children's education, health, and wellbeing since 2015"
-}
-
-###
-# Update volunteer profile
-PATCH {{baseUrl}}/users/
-Authorization: Token {{samsmithToken}}
-Content-Type: application/json
-
-{
-    "location": "Oakland",
-    "bio": "Environmental engineer with a passion for ocean conservation"
-}
-
-# ==============================
-# LOGOUT
-# ==============================
-
-###
-# Logout
-POST {{baseUrl}}/logout/
-Authorization: Token {{johndoeToken}}
