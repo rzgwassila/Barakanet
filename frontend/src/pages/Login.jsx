@@ -1,29 +1,40 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Redirect after login
-import axios from "axios"; // API requests
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/Auth.css";
 
 const Login = () => {
-  const [email, setEmail] = useState(""); // Store email
-  const [password, setPassword] = useState(""); // Store password
-  const [error, setError] = useState(""); // Store error messages
-  const navigate = useNavigate(); // For redirection
+  const [usernameOrEmail, setUsernameOrEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent page refresh
+    e.preventDefault();
 
     try {
       const response = await axios.post("http://localhost:8000/api/login/", {
-        email,
+        username: usernameOrEmail, // Accepts username or email
         password,
       });
 
-      // If login is successful, save token & redirect
+      // Store token and user details
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
       alert("Login successful!");
-      navigate("/dashboard"); // Redirect user to dashboard
+      console.log(response);
+
+      // Redirect based on user role
+      if (response.data.user.role === "volunteer") {
+        navigate("/volunteer-dashboard");
+      } else if (response.data.user.role === "charity") {
+        navigate("/charity-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
-      setError("Invalid email or password. Please try again.");
+      setError("Invalid credentials. Please try again.");
     }
   };
 
@@ -34,18 +45,16 @@ const Login = () => {
           <h1 className="auth-title">
             Welcome to <span className="highlight">BarakaNet!</span>
           </h1>
-          <p className="auth-subtitle">
-            Welcome back! Please login to your account.
-          </p>
+          <p className="auth-subtitle">Login to your account</p>
 
           <form onSubmit={handleLogin}>
             <div className="input-group">
-              <label>Email Address</label>
+              <label>Username or Email</label>
               <input
-                type="email"
-                placeholder="hakeem@digital.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="Enter your username or email"
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
                 required
               />
             </div>
@@ -59,8 +68,7 @@ const Login = () => {
                 required
               />
             </div>
-            {error && <p className="error">{error}</p>}{" "}
-            {/* Show error message */}
+            {error && <p className="error">{error}</p>}
             <div className="remember-forgot">
               <label>
                 <input type="checkbox" /> Remember Me

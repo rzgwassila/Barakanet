@@ -1,0 +1,86 @@
+.profile-container {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.last-update {
+  text-align: center;
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 20px;
+}
+
+.profile-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.form-section {
+  width: 48%;
+}
+
+h4 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin: 10px 0 5px;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.phone-group {
+  display: flex;
+  align-items: center;
+}
+
+.phone-group span {
+  background: #eee;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-right: none;
+}
+
+.phone-group input {
+  flex: 1;
+  border-left: none;
+}
+
+/* Center the buttons at the bottom */
+.buttons {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.save-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.cancel-btn {
+  background: yellow;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+}
