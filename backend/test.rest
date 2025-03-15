@@ -1,135 +1,104 @@
+### Variables
 @baseUrl = http://localhost:8000/api
-@contentType = application/json
-@token = 
+@authToken = YOUR_AUTH_TOKEN_AFTER_LOGIN
 
 ### Register a new volunteer user
-POST {{baseUrl}}/users/register/
-Content-Type: {{contentType}}
+POST {{baseUrl}}/register/
+Content-Type: application/json
 
 {
-    "username": "volunteer1",
-    "email": "volunteer1@example.com",
-    "password": "securepassword123",
-    "phone_number": "1234567890",
-    "location": "bab eloued, dz",
-    "role": "volunteer"
+  "username": "volunteer2",
+  "email": "volunteer2@example.com",
+  "password": "securepassword123",
+  "confirm_password": "securepassword123",
+  "first_name": "John",
+  "last_name": "Doe",
+  "role": "volunteer",
+  "location": "New York",
+  "phone_number": "123-456-7890"
 }
 
 ### Register a new charity user
-POST {{baseUrl}}/users/register/
-Content-Type: {{contentType}}
+POST {{baseUrl}}/register/
+Content-Type: application/json
 
 {
-    "username": "charity1",
-    "email": "charity1@example.com",
-    "password": "securepassword123",
-    "phone_number": "0987654321",
-    "location": "San Francisco, CA",
-    "role": "charity"
+  "username": "charity1",
+  "email": "charity1@example.com",
+  "password": "securepassword123",
+  "confirm_password": "securepassword123",
+  "first_name": "Charity",
+  "last_name": "Organization",
+  "role": "charity",
+  "location": "San Francisco",
+  "phone_number": "987-654-3210",
+  "social_media_linkedin": "https://linkedin.com/in/charity-org",
+  "social_media_twitter": "https://twitter.com/charity-org",
+  "social_media_facebook": "https://facebook.com/charity-org",
+  "social_media_instagram": "https://instagram.com/charity-org"
 }
 
-### Login and get tokens
-# @name login
-POST {{baseUrl}}/token/
-Content-Type: {{contentType}}
+### Login with username
+POST {{baseUrl}}/login/
+Content-Type: application/json
 
 {
-    "username": "volunteer1",
-    "password": "securepassword123"
+  "username": "volunteer2",
+  "password": "securepassword123"
 }
 
-### Store token from the login response
-@token = {{login.response.body.access}}
-
-### Get current user profile
-GET {{baseUrl}}/users/me/
-Authorization: Bearer {{token}}
-
-### Get all users (admin function)
-GET {{baseUrl}}/users/
-Authorization: Bearer {{token}}
-
-### Update user profile
-PATCH {{baseUrl}}/users/1/
-Authorization: Bearer {{token}}
-Content-Type: {{contentType}}
+### Login with email
+POST {{baseUrl}}/login/
+Content-Type: application/json
 
 {
-    "phone_number": "1112223333",
-    "location": "Boston, MA"
+  "username": "charity1@example.com",
+  "password": "securepassword123"
 }
 
-### Login as charity
-# @name loginCharity
-POST {{baseUrl}}/token/
-Content-Type: {{contentType}}
+### Get user profile (authenticated)
+GET {{baseUrl}}/profile/
+Authorization: Token {{authToken}}
+
+### Logout (authenticated)
+POST {{baseUrl}}/logout/
+Authorization: Token {{authToken}}
+
+### Test with invalid credentials
+POST {{baseUrl}}/login/
+Content-Type: application/json
 
 {
-    "username": "charity1",
-    "password": "securepassword123"
+  "username": "wronguser",
+  "password": "wrongpassword"
 }
 
-### Store charity token
-@charityToken = {{loginCharity.response.body.access}}
-
-### Upload charity file
-POST {{baseUrl}}/charity-files/
-Authorization: Bearer {{charityToken}}
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="example.pdf"
-Content-Type: application/pdf
-
-< ./path/to/your/example.pdf
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="description"
-
-Example charity document
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-### Upload charity image
-POST {{baseUrl}}/charity-images/
-Authorization: Bearer {{charityToken}}
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="image"; filename="charity_photo.jpg"
-Content-Type: image/jpeg
-
-< ./path/to/your/charity_photo.jpg
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="caption"
-
-Our charity team in action
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-### Get charity files
-GET {{baseUrl}}/charity-files/
-Authorization: Bearer {{charityToken}}
-
-### Get charity images
-GET {{baseUrl}}/charity-images/
-Authorization: Bearer {{charityToken}}
-
-### Update charity social media links
-PATCH {{baseUrl}}/users/2/
-Authorization: Bearer {{charityToken}}
-Content-Type: {{contentType}}
+### Test with mismatched passwords during registration
+POST {{baseUrl}}/register/
+Content-Type: application/json
 
 {
-    "charity_profile": {
-        "social_media_linkedin": "https://linkedin.com/in/charity1",
-        "social_media_twitter": "https://twitter.com/charity1",
-        "social_media_facebook": "https://facebook.com/charity1",
-        "social_media_instagram": "https://instagram.com/charity1"
-    }
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "password123",
+  "confirm_password": "differentpassword",
+  "first_name": "Test",
+  "last_name": "User",
+  "role": "volunteer",
+  "location": "Test Location"
 }
 
-### Refresh token
-POST {{baseUrl}}/token/refresh/
-Content-Type: {{contentType}}
+### Test with invalid role
+POST {{baseUrl}}/register/
+Content-Type: application/json
 
 {
-    "refresh": "your_refresh_token_here"
+  "username": "testuser",
+  "email": "testuser@example.com",
+  "password": "password123",
+  "confirm_password": "password123",
+  "first_name": "Test",
+  "last_name": "User",
+  "role": "invalid_role",
+  "location": "Test Location"
 }

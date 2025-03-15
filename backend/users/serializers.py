@@ -1,80 +1,64 @@
-# serializers.py
 from rest_framework import serializers
 from .models import User, Volunteer, Charity, CharityFile, CharityImage
-from django.contrib.auth import authenticate
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'location', 'phone_number']
 
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    confirm_password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'confirm_password', 'first_name', 
+                  'last_name', 'role', 'location', 'phone_number']
+        extra_kwargs = {'phone_number': {'required': False}}
+    
     def validate(self, data):
-        username = data.get('username')
-        password = data.get('password')
-
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user:
-                if not user.is_active:
-                    raise serializers.ValidationError("User is deactivated.")
-            else:
-                raise serializers.ValidationError("Unable to log in with provided credentials.")
-        else:
-            raise serializers.ValidationError("Must include 'username' and 'password'.")
-
-        data['user'] = user
+        # Check if passwords match
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "Passwords don't match"})
+        
+        # Validate role
+        if data['role'] not in [role[0] for role in User.USER_TYPES]:
+            raise serializers.ValidationError({"role": "Invalid role selected"})
+        
         return data
     
-class VolunteerSerializer(serializers.ModelSerializer):
+    def validate_email(self, value):
+        # Check if email already exists
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already in use")
+        return value
+
+class VolunteerRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volunteer
-        fields = ['qr_code']
+        fields = []  # Currently no additional fields required for volunteer registration
 
+class CharityRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Charity
+        fields = ['social_media_linkedin', 'social_media_twitter', 
+                  'social_media_facebook', 'social_media_instagram']
+        extra_kwargs = {
+            'social_media_linkedin': {'required': False},
+            'social_media_twitter': {'required': False},
+            'social_media_facebook': {'required': False},
+            'social_media_instagram': {'required': False}
+        }
 class CharityFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CharityFile
-        fields = ['id', 'file', 'description', 'uploaded_at']
+        fields = ['id', 'charity', 'file', 'description', 'uploaded_at']
 
 class CharityImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = CharityImage
-        fields = ['id', 'image', 'caption', 'uploaded_at']
+        fields = ['id', 'charity', 'image', 'caption', 'uploaded_at']
 
-class CharitySerializer(serializers.ModelSerializer):
-    files = CharityFileSerializer(many=True, read_only=True)
-    images = CharityImageSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = Charity
-        fields = ['social_media_linkedin', 'social_media_twitter', 
-                  'social_media_facebook', 'social_media_instagram',
-                  'files', 'images']
-
-class UserSerializer(serializers.ModelSerializer):
-    volunteer_profile = VolunteerSerializer(read_only=True)
-    charity_profile = CharitySerializer(read_only=True)
-    
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'phone_number', 'location', 
-                  'role', 'volunteer_profile', 'charity_profile']
-        extra_kwargs = {'password': {'write_only': True}}
-    
-    def create(self, validated_data):
-        role = validated_data.pop('role')
-        password = validated_data.pop('password', None)
-        user = User.objects.create(**validated_data)
-        
-        if password:
-            user.set_password(password)
-        
-        user.role = role
-        user.save()
-        
-        # Create role-specific profile
-        if role == 'volunteer':
-            Volunteer.objects.create(user=user)
-        elif role == 'charity':
-            Charity.objects.create(user=user)
-            
-        return user
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)  # Can be username or email
+    password = serializers.CharField(required=True, style={'input_type': 'password'})

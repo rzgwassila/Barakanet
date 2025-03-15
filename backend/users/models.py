@@ -16,22 +16,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True)
     role = models.CharField(max_length=10, choices=USER_TYPES)
     location = models.CharField(max_length=255)
-    
-    groups = models.ManyToManyField(
-        Group,
-        related_name='custom_user_set',  # Change this to a unique name
-        blank=True,
-        help_text='The groups this user belongs to.',
-        related_query_name='user',
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='custom_user_set',  # Change this to a unique name
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_query_name='user',
-    )
-    
+
     def __str__(self):
         return self.username
 

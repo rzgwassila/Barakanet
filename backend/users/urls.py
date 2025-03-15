@@ -1,11 +1,8 @@
-# urls.py
+# filepath: /home/camatchoo/WebDev/Dcf-hackathon/backend/users/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import UserViewSet, CharityFileViewSet, CharityImageViewSet
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from . import views
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -14,6 +11,8 @@ router.register(r'charity-images', CharityImageViewSet, basename='charity-images
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('register/', views.register_user, name='register'),
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+    path('profile/', views.get_user_profile, name='profile'),
 ]
