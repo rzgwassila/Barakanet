@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import HeroSection from "../components/HeroSection";
-import RestaurantList from "../components/RestaurantList";
+import Navbar from "../components/common/Navbar";
+import HeroSection from "../components/common/HeroSection";
+import RestaurantList from "../components/common/RestaurantList";
 
 const Home = () => {
   return (

@@ -20,7 +20,7 @@
   .hero-title {
     font-size: 3rem;
     font-weight: bold;
-    color: #ff3b3f;
+    color: #E30613;
   }
   
   .hero-subtitle {
@@ -48,7 +48,7 @@
   }
   
   .search-box button {
-    background: #ff3b3f;
+    background: #E30613;
     color: white;
     border: none;
     padding: 10px 20px;

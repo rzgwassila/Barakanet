@@ -1,0 +1,94 @@
+.restaurants-container {
+  display: flex;
+  justify-content: center; /* Centers the content */
+  align-items: flex-start; /* Aligns items at the top */
+  gap: 20px; /* Space between list and map */
+  width: 90%; /* Makes it take 90% of the page width */
+  margin: 0 auto; /* Centers the section horizontally */
+  height: 500px; /* Set a fixed height */
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+margin : 30px 45px;
+}
+
+.filters select,
+.filters button {
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid black;
+}
+.volunteer-btn{
+  background-color: #ffb400;
+  width: 150px;
+}
+.volunteer-btn:hover{
+  background-color: #1d1c1b;
+  cloro : white ;
+}
+.content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Left side - List of Restaurants */
+.list-container {
+  flex: 1;  /* Takes 35% of the space */
+  max-width: 35%;
+  background: white;
+  padding: 10px;
+  margin-left: 40px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Enables scrolling */
+  max-height: 81vh; /* Makes sure it doesn't take too much space */}
+  .list-container h2 {
+padding: 15px;
+  }
+.restaurant {
+  display: flex;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  max-height: 100px; /* Adjust height here */
+  min-height: 90px;
+}
+
+.restaurant-info {
+  flex: 1;
+}
+
+.restaurant h3 {
+  margin: 5px 0;
+ 
+}
+
+.restaurant img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+/* Right side - Map */
+.map-container {
+  flex: 2;
+  height: 500px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.map {
+  width: 70%;
+  height: 100%;
+  border-radius: 12px;
+}
