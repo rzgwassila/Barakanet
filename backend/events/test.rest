@@ -1,0 +1,91 @@
+
+@baseUrl = http://localhost:8000/api
+@authToken = YOUR_AUTH_TOKEN_AFTER_LOGIN
+
+### Create a new event
+POST {{baseUrl}}/events/
+Content-Type: application/json
+Authorization: Token {{authToken}}
+
+{
+  "name": "Charity Event",
+  "description": "A charity event to raise funds.",
+  "created_by": 1,  // Replace with the actual charity ID
+  "date_time": "2025-04-01T10:00:00Z",
+  "location": "123 Charity St, City, Country",
+  "phone_number": "123-456-7890"
+}
+
+### Get all events
+GET {{baseUrl}}/events/
+Authorization: Token {{authToken}}
+
+### Get a specific event
+GET {{baseUrl}}/events/1/
+Authorization: Token {{authToken}}
+
+### Update an event
+PUT {{baseUrl}}/events/1/
+Content-Type: application/json
+Authorization: Token {{authToken}}
+
+{
+  "name": "Updated Charity Event",
+  "description": "An updated description for the charity event.",
+  "created_by": 1,  // Replace with the actual charity ID
+  "date_time": "2025-04-01T12:00:00Z",
+  "location": "123 Charity St, City, Country",
+  "phone_number": "123-456-7890"
+}
+
+### Delete an event
+DELETE {{baseUrl}}/events/1/
+Authorization: Token {{authToken}}
+
+### Create a new request (volunteering)
+POST {{baseUrl}}/requests/
+Content-Type: application/json
+Authorization: Token {{authToken}}
+
+{
+  "event": 1,  // Replace with the actual event ID
+  "request_type": "volunteering",
+  "task": "Setup chairs",
+  "volunteers_needed": 5
+}
+
+### Create a new request (borrowing)
+POST {{baseUrl}}/requests/
+Content-Type: application/json
+Authorization: Token {{authToken}}
+
+{
+  "event": 1,  // Replace with the actual event ID
+  "request_type": "borrowing",
+  "item_to_borrow": "Projector",
+  "quantity_needed": 2
+}
+
+### Get all requests
+GET {{baseUrl}}/requests/
+Authorization: Token {{authToken}}
+
+### Get a specific request
+GET {{baseUrl}}/requests/1/
+Authorization: Token {{authToken}}
+
+### Update a request
+PUT {{baseUrl}}/requests/1/
+Content-Type: application/json
+Authorization: Token {{authToken}}
+
+{
+  "event": 1,  // Replace with the actual event ID
+  "request_type": "volunteering",
+  "task": "Setup chairs and tables",
+  "volunteers_needed": 10
+}
+
+### Delete a request
+DELETE {{baseUrl}}/requests/1/
+Authorization: Token {{authToken}}

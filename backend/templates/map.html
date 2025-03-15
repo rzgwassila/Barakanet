@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Restaurants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #map { 
+            height: 400px;
+            width: 90%;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff5733;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        button:hover {
+            background-color: #e04e2f;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            width: 80%;
+            margin: auto;
+            text-align: left;
+        }
+        li {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        li i {
+            margin-right: 10px;
+            color: #ff5733;
+        }
+    </style>
+    <!-- Leaflet.js for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <h1>Nearby Restaurants</h1>
+    <button onclick="getLocation()">Find Restaurants Near Me</button>
+
+    <ul id="restaurant-list"></ul>
+    <div id="map"></div>
+
+    <script>
+        let map;
+        let userMarker;
+
+        function initMap(lat, lon) {
+            if (!map) {
+                map = L.map('map').setView([lat, lon], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+            } else {
+                map.setView([lat, lon], 13);
+            }
+
+            if (userMarker) {
+                userMarker.setLatLng([lat, lon]);
+            } else {
+                userMarker = L.marker([lat, lon], { icon: userIcon }).addTo(map)
+                    .bindPopup("<b>You are here!</b>")
+                    .openPopup();
+            }
+        }
+
+        const userIcon = L.icon({
+            iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg',
+            iconSize: [15, 15]
+        });
+
+        const foodIcon = L.icon({
+            iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30]
+        });
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showRestaurants, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showRestaurants(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            initMap(lat, lon);
+
+            fetch(`/api/nearby-restaurants/?lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById("restaurant-list");
+                    list.innerHTML = "";
+
+                    if (data.restaurants.length === 0) {
+                        list.innerHTML = "<li>No restaurants found nearby.</li>";
+                        return;
+                    }
+
+                    data.restaurants.forEach(restaurant => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${restaurant.name} (${restaurant.type})`;
+                        list.appendChild(li);
+
+                        L.marker([restaurant.latitude, restaurant.longitude], { icon: foodIcon })
+                        .addTo(map)
+                        .bindPopup(`<b>${restaurant.name}</b><br>Type: ${restaurant.type}`)
+                        .openPopup();
+                    });
+                })
+                .catch(error => console.error("Error fetching restaurants:", error));
+        }
+
+        function showError(error) {
+            alert("Error getting location: " + error.message);
+        }
+    </script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+</body>
+</html>
