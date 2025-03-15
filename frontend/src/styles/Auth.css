@@ -105,4 +105,14 @@
     color: #ffb400;
     border: 1px solid #ffb400;
   }
+  .input-row {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
   

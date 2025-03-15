@@ -1,59 +1,59 @@
 import React, { useState } from "react";
-import "../styles/Auth.css";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "../styles/Auth.css";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
+    first_name: "",
+    last_name: "",
     role: "volunteer",
-    phoneNumber: "",
     location: "",
+    phone_number: "",
+    social_media_linkedin: "",
+    social_media_twitter: "",
+    social_media_facebook: "",
+    social_media_instagram: "",
   });
 
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    setError(null);
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match!");
+      setError("Passwords do not match.");
       return;
     }
 
-    setLoading(true);
-
-    const userData = {
-      email: formData.email,
-      password: formData.password,
-      phone_number: formData.phoneNumber,
-      role: formData.role,
-      location: {
-        address: formData.location,
-      },
-    };
-
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/signup/",
-        userData
+        "http://localhost:8000/api/register/",
+        formData
       );
-      alert("Signup successful! You can now log in.");
-    } catch (error) {
-      setError(
-        error.response?.data?.message || "Signup failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
+
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      alert("Signup successful! Redirecting...");
+      console.log(response);
+
+      if (response.data.user.role === "volunteer") {
+        navigate("/");
+      } else if (response.data.user.role === "charity") {
+        navigate("/charity-dashboard");
+      }
+    } catch (err) {
+      setError("Signup failed. Please check your details.");
     }
   };
 
@@ -62,91 +62,188 @@ const Signup = () => {
       <div className="auth-box">
         <div className="auth-left">
           <h1 className="auth-title">
-            Welcome to <span className="highlight">BarakaNet!</span>
+            Join <span className="highlight">BarakaNet!</span>
           </h1>
-          <p className="auth-subtitle">Create your account to get started.</p>
+          <p className="auth-subtitle">Create your account</p>
 
-          {error && <p className="error-message">{error}</p>}
-
-          <form onSubmit={handleSubmit}>
-            <div className="input-group">
-              <label>Email Address</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="hakeem@digital.com"
-                required
-                value={formData.email}
-                onChange={handleChange}
-              />
+          <form onSubmit={handleSignup}>
+            {/* Username & Email */}
+            <div className="input-row">
+              <div className="input-group">
+                <label>Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
-            <div className="input-group">
-              <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="*************"
-                required
-                value={formData.password}
-                onChange={handleChange}
-              />
+            {/* Passwords */}
+            <div className="input-row">
+              <div className="input-group">
+                <label>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="*************"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="*************"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
-            <div className="input-group">
-              <label>Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="*************"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
+            {/* First Name & Last Name */}
+            <div className="input-row">
+              <div className="input-group">
+                <label>First Name</label>
+                <input
+                  type="text"
+                  name="first_name"
+                  placeholder="First Name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  name="last_name"
+                  placeholder="Last Name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
+            {/* Role Selection */}
             <div className="input-group">
-              <label>Role</label>
-              <select name="role" value={formData.role} onChange={handleChange}>
+              <label>Select Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+              >
                 <option value="volunteer">Volunteer</option>
-                <option value="donor">Donor</option>
+                <option value="charity">Charity</option>
               </select>
             </div>
 
-            <div className="input-group">
-              <label>Phone number</label>
-              <input
-                type="text"
-                name="phoneNumber"
-                placeholder="0123456789"
-                required
-                value={formData.phoneNumber}
-                onChange={handleChange}
-              />
+            {/* Location & Phone Number */}
+            <div className="input-row">
+              <div className="input-group">
+                <label>Location</label>
+                <input
+                  type="text"
+                  name="location"
+                  placeholder="Location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <label>Phone Number</label>
+                <input
+                  type="text"
+                  name="phone_number"
+                  placeholder="Phone Number"
+                  value={formData.phone_number}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
-            <div className="input-group">
-              <label>Location</label>
-              <input
-                type="text"
-                name="location"
-                placeholder="Algiers"
-                required
-                value={formData.location}
-                onChange={handleChange}
-              />
+            {/* Social Media Links */}
+            <div className="input-row">
+              <div className="input-group">
+                <label>LinkedIn</label>
+                <input
+                  type="text"
+                  name="social_media_linkedin"
+                  placeholder="LinkedIn Profile"
+                  value={formData.social_media_linkedin}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Twitter</label>
+                <input
+                  type="text"
+                  name="social_media_twitter"
+                  placeholder="Twitter Profile"
+                  value={formData.social_media_twitter}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
-            <div className="remember-forgot">
-              <label>
-                <input type="checkbox" /> Remember Me
-              </label>
-              <a href="#">Forgot Password?</a>
+            <div className="input-row">
+              <div className="input-group">
+                <label>Facebook</label>
+                <input
+                  type="text"
+                  name="social_media_facebook"
+                  placeholder="Facebook Profile"
+                  value={formData.social_media_facebook}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="input-group">
+                <label>Instagram</label>
+                <input
+                  type="text"
+                  name="social_media_instagram"
+                  placeholder="Instagram Profile"
+                  value={formData.social_media_instagram}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
+
+            {error && <p className="error">{error}</p>}
 
             <div className="button-group">
-              <button type="submit" className="signup-btn" disabled={loading}>
-                {loading ? "Signing up..." : "Sign Up"}
+              <button type="submit" className="signup-btn">
+                Sign Up
+              </button>
+              <button
+                type="button"
+                className="login-btn"
+                onClick={() => navigate("/login")}
+              >
+                Login
               </button>
             </div>
           </form>

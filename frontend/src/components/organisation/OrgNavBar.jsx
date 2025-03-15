@@ -1,9 +1,17 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../../styles/Navbar.css"; // Use the same style as the volunteer navbar
+import { FaSignOutAlt } from "react-icons/fa";
 
 const OrganizationNavbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/"); // Redirect to home after logout
+  };
 
   return (
     <nav className="navbar">
@@ -14,7 +22,6 @@ const OrganizationNavbar = () => {
           }
         >
           <Link to="/organisation/dashboard">Dashboard</Link>
-          <span className="underline"></span>
         </li>
 
         <li
@@ -23,7 +30,6 @@ const OrganizationNavbar = () => {
           }
         >
           <Link to="/organisation/create-event">Create Event</Link>
-          <span className="underline"></span>
         </li>
 
         <li
@@ -32,7 +38,6 @@ const OrganizationNavbar = () => {
           }
         >
           <Link to="/organisation/profil">Profile</Link>
-          <span className="underline"></span>
         </li>
 
         <li
@@ -41,9 +46,15 @@ const OrganizationNavbar = () => {
           }
         >
           <Link to="/organisation/volunteerList">Manage Volunteers</Link>
-          <span className="underline"></span>
         </li>
       </ul>
+
+      {/* Logout Button */}
+      <div className="nav-buttons">
+        <button className="logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt /> Logout
+        </button>
+      </div>
     </nav>
   );
 };

@@ -7,7 +7,7 @@ import Signup from "./pages/Signup";
 import RestaurantFiltre from "./components/volunteer/RestaurantFiltre";
 
 // Import Organisation Pages
-import Dashboard from "./components/organisation/OrganizationDashboard";
+import Dashboard from "./components/organisation/Dashboard";
 import ManageVolunteers from "./components/organisation/ManageVolunteers";
 import OrganisationLayout from "./components/organisation/OrganisationLayout";
 import Profil from "./components/organisation/Profil";

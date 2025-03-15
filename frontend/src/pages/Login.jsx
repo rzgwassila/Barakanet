@@ -27,11 +27,9 @@ const Login = () => {
 
       // Redirect based on user role
       if (response.data.user.role === "volunteer") {
-        navigate("/volunteer-dashboard");
+        navigate("/");
       } else if (response.data.user.role === "charity") {
-        navigate("/charity-dashboard");
-      } else {
-        navigate("/dashboard");
+        navigate("/organisation/dashboard");
       }
     } catch (err) {
       setError("Invalid credentials. Please try again.");

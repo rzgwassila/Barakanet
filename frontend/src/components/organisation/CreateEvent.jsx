@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "../../styles/CreateEvent.css";
 
 const CreateEvent = () => {
@@ -21,9 +22,49 @@ const CreateEvent = () => {
     setEventData({ ...eventData, file: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Event Data:", eventData);
+
+    const formData = new FormData();
+    formData.append("event_name", eventData.eventName);
+    formData.append("description", eventData.description);
+    formData.append("date", eventData.date);
+    formData.append("place", eventData.place);
+    formData.append("requirements", eventData.requirements);
+    formData.append("phone_number", eventData.phoneNumber);
+    if (eventData.file) {
+      formData.append("file", eventData.file);
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/events/create/",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log("Event Created:", response.data);
+      alert("Event successfully created!");
+
+      // Reset form after submission
+      setEventData({
+        eventName: "",
+        description: "",
+        date: "",
+        place: "",
+        requirements: "",
+        phoneNumber: "",
+        file: null,
+      });
+    } catch (error) {
+      console.error(
+        "Error creating event:",
+        error.response?.data || error.message
+      );
+      alert("Error creating event. Please try again.");
+    }
   };
 
   return (
@@ -43,14 +84,9 @@ const CreateEvent = () => {
           value={eventData.eventName}
           onChange={handleChange}
         />
-        <label>Event Informations</label>
-        <input
-          type="text"
-          name="file"
-          value={eventData.file ? eventData.file.name : ""}
-          readOnly
-        />
-        <button className="cancel-btn">CANCEL</button>
+        <button className="cancel-btn" type="reset">
+          CANCEL
+        </button>
       </div>
 
       <div className="event-details">

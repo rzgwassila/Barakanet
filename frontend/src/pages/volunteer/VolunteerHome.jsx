@@ -1,6 +1,6 @@
 import React from "react";
 
-const OrganisationHome = () => {
+const VolunteerHome = () => {
   return (
     <div>
       <h1>Volunteer Dashboard</h1>
@@ -9,4 +9,4 @@ const OrganisationHome = () => {
   );
 };
 
-export default OrganisationHome;
+export default VolunteerHome;

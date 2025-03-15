@@ -123,3 +123,39 @@
     border: 2px solid #e30615c2;
     color: #e30615c2;
   }
+  /* User Info and Logout Button */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Space between name and button */
+  font-size: 18px;
+  font-weight: 500;
+  color: black;
+}
+
+/* Username Styling */
+.user-name {
+  color: #000000c2;
+  border: 2px solid #000000c2;
+  padding: 8px 15px;
+  border-radius: 8px;
+  transition: border 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+/* Logout Button */
+.logout-btn {
+ 
+  background: transparent;
+  color: #e30615c2;
+  font-size: 16px;
+  padding: 8px 15px;
+  border: 2px solid #e30615c2;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.logout-btn:hover {
+  border: 2px solid #e30615c2;
+  color: #e30615c2;
+}
